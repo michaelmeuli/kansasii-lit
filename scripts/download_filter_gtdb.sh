@@ -28,7 +28,7 @@ done
 
 SPECIES_PATTERN='s__Mycobacterium (kansasii|persicum|pseudokansasii|innocens|attenuatum|ostraviense|gastri)'
 METADATA="bac120_metadata_r${RELEASE}.tsv"
-ACCESSIONS_OUT="$OUT_DIR/kansasii-complex-mlsa-accessions.txt"
+ACCESSIONS_OUT="$DATA_DIR/kansasii-complex-mlsa-accessions.txt"
 
 # Column indices are looked up from the header at runtime so this stays
 # robust to GTDB reordering columns between releases.
