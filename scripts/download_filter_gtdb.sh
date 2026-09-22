@@ -55,3 +55,5 @@ n_acc=$(wc -l < "$ACCESSIONS_OUT")
 echo "Wrote $n_acc kansasii-complex accessions to $ACCESSIONS_OUT"
 echo "Per-species counts:"
 cut -f2 "$ACCESSIONS_OUT" | sort | uniq -c
+
+cp "$ACCESSIONS_OUT" "$OUT_DIR/"
