@@ -2,7 +2,7 @@
 """Build screening_map_link.csv: link project samples to LNR, MHK (AST) and NGS numbers.
 
 Usage (conda activate kansasii_mic):
-    python screening_map_link.py [--indir DIR] [--out FILE]
+    python screening_map_link.py [--indir DIR] [--out FILE] [--copy-to DIR]
 
 Sources of truth: screening_map_project.csv and screening_map_strains.csv (agree on TNR).
 Links are made via
@@ -13,6 +13,7 @@ Afterwards the result is compared with screening_map.csv.
 """
 import argparse
 import re
+import shutil
 import sys
 from pathlib import Path
 
@@ -159,6 +160,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--indir", type=Path, default=Path("/shares/sander.imm.uzh/MM/kansasii/data/imm"))
     ap.add_argument("--out", type=Path, default=None, help="default: <indir>/screening_map_link.csv")
+    ap.add_argument("--copy-to", type=Path, default=Path("/shares/sander.imm.uzh/MM/kansasii/output/mlsa"),
+                    help="directory to also copy the output to")
     args = ap.parse_args()
     out = args.out or args.indir / "screening_map_link.csv"
 
@@ -166,6 +169,9 @@ def main():
     link = build(project, strains, ast, ngs)
     link.to_csv(out, index=False)
     print(f"wrote {out} ({len(link)} rows)")
+    args.copy_to.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(out, args.copy_to / out.name)
+    print(f"copied to {args.copy_to / out.name}")
     compare(link, old)
 
 
