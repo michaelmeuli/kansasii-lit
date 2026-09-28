@@ -72,19 +72,31 @@ Used downstream by `mlsa-kansasii` (`SCREENING_MAP` in `mlsa/__init__.py`,
 `scripts/link_sanger_kansasii.sh`, `main2_sanger_differentiation/`), which
 reads `data/imm/screening_map_link.csv`.
 
-## Downloading results to local `kansasii_C`
+## Pipeline runs (immensekansasii)
 
-Everything under `/shares/sander.imm.uzh/MM/kansasii/output/` can be copied to
-the local `kansasii_C` folder with `scp` from a local PowerShell terminal
-(see also `scripts/lit_download.sh`). Use `-r` for whole directories:
+Start every run of the immensekansasii (IMMense) pipeline in its own
+subdirectory of `/shares/sander.imm.uzh/MM/kansasii/runs/`, not in `output/`.
+Nextflow writes its `work/` directory into the directory the run is started
+from. `work/` is large and only temporary, so it must not end up in
+`output/`, which gets downloaded to local `kansasii_C`. Once a run has
+finished and been checked, copy its end results to
+`/shares/sander.imm.uzh/MM/kansasii/output/<run_name>/` and delete `work/`.
 
-```powershell
-# single file
-scp mimeul@cluster.s3it.uzh.ch:/shares/sander.imm.uzh/MM/kansasii/output/mlsa/screening_map_link.csv "$env:USERPROFILE\kansasii_C\downloads\"
+```bash
+mkdir -p /shares/sander.imm.uzh/MM/kansasii/runs/<run_name>
+cd /shares/sander.imm.uzh/MM/kansasii/runs/<run_name>
+bash /shares/sander.imm.uzh/MM/kansasii/repos/immensekansasii/run_IMMENSE.sh -j <job_name> -t <input_type> -r <run_name> -i <input_dir>
 
-# whole directory
-scp -r mimeul@cluster.s3it.uzh.ch:/shares/sander.imm.uzh/MM/kansasii/output/lit/gtdb/gtdb232 "$env:USERPROFILE\kansasii_C\downloads\"
+# after the run: collect results (without work/) in output/
+rsync -a --exclude work --exclude .nextflow /shares/sander.imm.uzh/MM/kansasii/runs/<run_name>/ /shares/sander.imm.uzh/MM/kansasii/output/<run_name>/
 ```
 
-The target folder must already exist. From a Linux/macOS shell, use
-`~/kansasii_C/downloads/` as the destination instead.
+## Downloading results to local `kansasii_C`
+
+Copy everything under `/shares/sander.imm.uzh/MM/kansasii/output/` to the
+local `kansasii_C` folder from a local PowerShell terminal:
+
+```powershell
+New-Item -ItemType Directory -Path "$env:USERPROFILE\kansasii_C\downloads\" -Force
+scp -r mimeul@cluster.s3it.uzh.ch:/shares/sander.imm.uzh/MM/kansasii/output/* "$env:USERPROFILE\kansasii_C\downloads\"
+```
