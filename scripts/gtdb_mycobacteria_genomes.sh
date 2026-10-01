@@ -111,6 +111,17 @@ awk -F'\t' -v OFS='\t' '{print $1, $1"_query"}' \
   mycobacterium_relevant_species_representative_accessions.txt > mycobacterium_relevant_species_representative_accessions_renamed.txt
 
 
+# Kansasii complex GTDB species-representative genomes (SPECIES_PATTERN from
+# above, gtdb_representative == "t"), same format as the relevant-species files
+awk -F'\t' -v OFS='\t' \
+  -v acc="$ACCESSION" -v tax="$TAX_COL" -v gtdbrep="$GTDB_REP_COL" \
+  -v pat="$SPECIES_PATTERN" \
+  '$tax ~ pat && $gtdbrep == "t" {print $acc}' \
+  mycobacteriaceae_rows_metadata.tsv | cut -c4- > kansasii_complex_gtdb_representative_accessions.txt
+awk -F'\t' -v OFS='\t' '{print $1, $1"_query"}' \
+  kansasii_complex_gtdb_representative_accessions.txt > kansasii_complex_gtdb_representative_accessions_renamed.txt
+
+
 OUTDIR="/shares/sander.imm.uzh/MM/kansasii/data/gtdb_genomes/Mycobacteriaceae"
 CHUNK_SIZE=500
 MAX_RETRIES=3
@@ -132,8 +143,23 @@ download_species() {
   fi
 
   mkdir -p "$dest" "$chunkdir"
-  echo "-- Mycobacteriaceae: downloading $(wc -l < "$accfile") accession(s) in chunks of $CHUNK_SIZE --"
-  split -d -a 4 -l "$CHUNK_SIZE" "$accfile" "$chunkdir/chunk_"
+
+  # Only fetch accessions whose genome directory is not already present, so
+  # reruns don't re-download (and `datasets` isn't needed when all exist)
+  local missing="$chunkdir/missing_accessions.txt"
+  while read -r acc; do
+    [ -d "$dest/ncbi_dataset/data/$acc" ] || echo "$acc"
+  done < "$accfile" > "$missing"
+  if [ ! -s "$missing" ]; then
+    echo "-- Mycobacteriaceae: all $(wc -l < "$accfile") genome(s) already present, nothing to download --"
+    return
+  fi
+
+  command -v datasets > /dev/null || { echo "ERROR: NCBI 'datasets' CLI not found (conda activate env_immense)" >&2; return 1; }
+
+  rm -f "$chunkdir"/chunk_*
+  echo "-- Mycobacteriaceae: downloading $(wc -l < "$missing") of $(wc -l < "$accfile") accession(s) in chunks of $CHUNK_SIZE --"
+  split -d -a 4 -l "$CHUNK_SIZE" "$missing" "$chunkdir/chunk_"
 
   local chunk zip attempt ok
   for chunk in "$chunkdir"/chunk_*; do
@@ -159,4 +185,11 @@ download_species() {
 
 download_species
 
-
+# Accessions still without a genome directory after the download (e.g.
+# suppressed/withdrawn at NCBI), in the same format as
+# kansasii_complex_type_strains.tsv: species is in gtdb_taxonomy (col 4),
+# gtdb_representative (t/f) in col 3.
+awk -F'\t' -v OFS='\t' -v dir="$OUTDIR/ncbi_dataset/data" \
+  'NR==1 {print; next} {acc=substr($1,4); if (system("test -d \"" dir "/" acc "\"") != 0) print}' \
+  mycobacteriaceae_selected_columns.tsv > not_downloaded_genomes.tsv
+echo "-- $(($(wc -l < not_downloaded_genomes.tsv) - 1)) genome(s) not available, see $OUT_DIR/not_downloaded_genomes.tsv --"

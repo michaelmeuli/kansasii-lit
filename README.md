@@ -13,6 +13,9 @@ Paths below are relative to `/shares/sander.imm.uzh/MM/kansasii/`.
 Filters GTDB r232 metadata for Mycobacteriaceae, builds accession lists and
 downloads all Mycobacteriaceae genomes with the NCBI `datasets` CLI. Run on
 a compute node (`srun --pty -n 1 -c 6 --time=01:00:00 --mem=16G bash -l`).
+Needs the `datasets` CLI, available in the `env_immense` conda environment
+(`conda activate env_immense`). Genomes already present in
+`data/gtdb_genomes/Mycobacteriaceae/ncbi_dataset/data/` are skipped.
 
 ```bash
 bash scripts/gtdb_mycobacteria_genomes.sh
