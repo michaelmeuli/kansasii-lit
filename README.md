@@ -36,25 +36,6 @@ Used downstream by:
 - `mlsa-kansasii/scripts/link_gtdb_kansasii_complex.sh`: symlinks the
   downloaded kansasii-complex genomes by species
 
-## `scripts/generate_itol_species_labels.sh`
-
-Turns the `_query` tip labels of the `kansasii_phylo.nf` tree
-(`kansasii_complex_tree.treefile`) into readable iTOL annotations. Run it
-after `gtdb_mycobacteria_genomes.sh`.
-
-```bash
-bash scripts/generate_itol_species_labels.sh
-```
-
-- Reads: `data/lit/gtdb/gtdb232/bac120_metadata_r232.tsv`,
-  `output/lit/gtdb/gtdb232/mycobacterium_relevant_species_representative_accessions_renamed.txt`
-- Writes to `output/lit/gtdb/gtdb232/`:
-  - `itol_species_labels.txt`: iTOL LABELS dataset (`Species name [accession]`)
-  - `itol_species_colorstrip.txt`: iTOL DATASET_COLORSTRIP grouping tips into
-    kansasii complex / MTBC / MAC / *M. simiae* complex
-
-Upload the treefile to iTOL, then drag both files onto the tree.
-
 ## `scripts/screening_map_link.py`
 
 Links project samples (TNR) to LNR, MHK (AST) and NGS numbers, using
