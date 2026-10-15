@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# gtdb-adv-search-genomes.sh
+# 05_gtdb_adv_search_genomes.sh
 #
 # Batch-download genome assemblies (+ GFF3 annotation) for species in the
 # Mycobacterium kansasii complex (MKC), using accession lists exported from
@@ -10,8 +10,8 @@
 # 12-genome species is a single zip instead of 12 separate downloads.
 #
 # Usage:
-#   ./gtdb-adv-search-genomes.sh                 # every species with an accession list
-#   ./gtdb-adv-search-genomes.sh persicum gastri  # just the species named
+#   ./05_gtdb_adv_search_genomes.sh                 # every species with an accession list
+#   ./05_gtdb_adv_search_genomes.sh persicum gastri  # just the species named
 #
 # Add a new species by dropping scripts/gtdb_adv_search_accessions/<short>-accessions.txt
 # (one accession per line) and adding <short> to SPECIES_NAME below -- no

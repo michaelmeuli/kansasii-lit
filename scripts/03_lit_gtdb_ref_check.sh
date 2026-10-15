@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
-# lit_gtdb_ref_check.sh
+# 03_lit_gtdb_ref_check.sh
 #
 # Compares the type_strains_ena_biosample_species.tsv output produced by
-# lit_gtdb_232.sh and lit_gtdb_226.sh, to check whether the two GTDB
+# 02_lit_gtdb_232.sh and 01_lit_gtdb_226.sh, to check whether the two GTDB
 # releases resolve the MKC type strains to the same ENA assembly
 # accessions (i.e. whether re-running against a newer release changed
 # which genome gets picked as any species' representative).

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# get_mkc_type_strains.sh
+# 04_get_mkc_type_strains.sh
 #
 # Find and download raw reads (and assemblies) for the type strains of the
 # Mycobacterium kansasii complex (MKC):
